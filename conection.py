@@ -2,11 +2,11 @@ import psycopg2
 from sqlalchemy import create_engine
 
 # Database connection details
-host = "my-first-rds-db.cdyukqcc8a37.us-east-1.rds.amazonaws.com"
+host = "YOUR IDENTIFIER"
 port = "5432"
 database = "postgres"
 user = "postgres"
-password = "London8692!"
+password = "YOUR PASSWORD HERE!"
 
 # Establish the connection
 conn = psycopg2.connect(
