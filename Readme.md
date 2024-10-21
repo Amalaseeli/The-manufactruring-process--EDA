@@ -1,3 +1,8 @@
+
+# Exploratory Data Analysis - The Manufacturing Process
+
+Exploratory Data Analysis (EDA) in the context of a manufacturing process is a critical step that involves investigating and understanding the data collected during various stages of manufacturing. The goal is to identify patterns, anomalies, relationships, and other insights that can inform process improvements, quality control, and decision-making
+
 # Machine failure dataset data dictionary
 
 - **UID**: Unique identifier of the machining session
@@ -14,3 +19,12 @@
 - **power failure (PWF)**: Failure in the process due to lack of power from the tool to complete the process
 - **overstrain failure (OSF)**: Failure due to the tool overstraining during the process
 - **random failures (RNF)**: Failures in the process which couldn't be categorised
+
+## Installation
+Cloning Repository to your local machine
+
+```bash
+  git clone https://github.com/Amalaseeli/The-manufactruring-process--EDA.git
+  
+```
+    
