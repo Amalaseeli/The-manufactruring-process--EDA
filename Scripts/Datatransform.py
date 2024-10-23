@@ -25,13 +25,15 @@ class DataTransform:
         self.convert_numeric_columns(['Air temperature [K]','Process temperature [K]','Torque [Nm]', 'Tool wear [min]'])
         self.convert_to_category(['Type'])
         self.convert_binary_columns_to_boolean(['Machine failure', 'TWF', 'HDF', 'PWF', 'OSF', 'RNF'])
+        return self.df
 
 if __name__ == "__main__":
     df=pd.read_csv('../failure_data.csv')
     # print(df.info())
+    df=df.convert_dtypes()
     data_transform=DataTransform(df)
     data_transform.transform_data()
     
     print(df.head(5))
     print(df.info())
-    print()
+  

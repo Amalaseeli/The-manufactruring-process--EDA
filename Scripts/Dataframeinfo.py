@@ -1,7 +1,10 @@
 import pandas as pd
+from Datatransform import DataTransform
 
 def load_data():
     df=pd.read_csv("../failure_data.csv")
+    data_transform = DataTransform(df)
+    data_transform.transform_data()
     return df
 
 class DataFrameInfo:
@@ -14,7 +17,7 @@ class DataFrameInfo:
 
     def extract_statistics(self):
         print("Statistical Values (Median, Standard Deviation, Mean):")
-        self.df.describe()
+        print(self.df.describe())
         
     def count_distinct_values(self):
         """
@@ -36,16 +39,21 @@ class DataFrameInfo:
         null_percentages = (self.df.isnull().mean() * 100).round(2)
         null_info = pd.DataFrame({'Null Count': null_counts, 'Percentage': null_percentages})
         print(null_info)
-
+        return null_info
+    
+    def data_frame_information(self):
+        self.describe_columns()
+        self.extract_statistics()
+        self.count_distinct_values()
+        self.dataframe_shape()
+        self.null_values_info()
+        return self.df
     
 if __name__=="__main__":
     df=load_data()
     data_info=DataFrameInfo(df)
-    data_info.describe_columns()
-    data_info.extract_statistics()
-    data_info.count_distinct_values()
-    data_info.dataframe_shape()
-    data_info.null_values_info()
+    data_info.data_frame_information()
+    
 
    
 
