@@ -1,7 +1,7 @@
 
 # Exploratory Data Analysis - The Manufacturing Process
 
-Exploratory Data Analysis (EDA) in the context of a manufacturing process is a critical step that involves investigating and understanding the data collected during various stages of manufacturing. The goal is to identify patterns, anomalies, relationships, and other insights that can inform process improvements, quality control, and decision-making
+This project aims to analyze and preprocess data from a manufacturing process to detect anomalies and improve product quality. The data undergoes transformations to handle skewness, impute missing values, and visualize various features for better understanding. We perform data extraction from cloud storage and a relational database service (RDS), followed by cleaning, transformation, and visualization.
 
 # Machine failure dataset data dictionary
 
@@ -20,6 +20,14 @@ Exploratory Data Analysis (EDA) in the context of a manufacturing process is a c
 - **overstrain failure (OSF)**: Failure due to the tool overstraining during the process
 - **random failures (RNF)**: Failures in the process which couldn't be categorised
 
+## Extracting Data from the RDS Database
+- To extract data from a Relational Database Service (RDS) such as Amazon RDS, follow these steps:
+
+1. Database Connection Setup: Ensure you have the database credentials (host, port, username, password, database name).
+
+2. Install Required Libraries:
+  - Use psycopg2 for PostgreSQL, pymysql for MySQL, or any other appropriate library based on your RDS database type.
+
 ## Installation
 Cloning Repository to your local machine
 
@@ -27,4 +35,20 @@ Cloning Repository to your local machine
   git clone https://github.com/Amalaseeli/The-manufactruring-process--EDA.git
   
 ```
+
+## Data Preprocessing
+- The extracted data undergoes several preprocessing steps:
+
+1. Handling Missing Values: Columns with missing data are either filled using statistical imputation methods or dropped if the missing rate is too high.
+2. Detecting Skewness: Identify and correct skewed distributions using transformations like log, Box-Cox, or Yeo-Johnson.
+3. Normalization and Scaling: Normalize or scale the features to standardize their range for better model performance.
+
+## Visualization:
+- The project includes visualizations to understand the data distributions and transformations:
+
+- Histograms for original and transformed distributions.
+-  Q-Q plots for assessing normality.
+-  Box plots to visualize outliers.
     
+## Results
+- Processed data and generated visualizations are saved in the results/ directory.
