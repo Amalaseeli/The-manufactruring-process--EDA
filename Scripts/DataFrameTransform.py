@@ -7,6 +7,7 @@ import seaborn as sns
 from statsmodels.graphics.gofplots import qqplot
 from matplotlib import pyplot
 import numpy as np
+from scipy.stats import zscore
  
 class DataFrameTransform:
     def __init__(self, df):
@@ -121,6 +122,14 @@ class DataFrameTransform:
                 self.df[col] = yeojohnson_transform
             return best_transformations
         
+    def remove_outlier(self, threshhold=3):
+         # Calculate Z-scores for all numeric columns
+        z_scores = self.df.select_dtypes(include=['number']).apply(zscore)
+        print(z_scores)
+        condition=(z_scores.abs() <= threshhold).all(axis=1)
+        self.df=self.df[condition]
+        return self.df
+                
 class Plotter:
     def __init__(self, df):
         self.df=df
@@ -171,21 +180,35 @@ class Plotter:
             plt.savefig(f'../results/outlier/box_plot/{col}_box_plot.png')
             plt.show()
 
-    def plot_scatter_plot(self, target_column):
+    def plot_scatter_plot(self,folder,df:pd.DataFrame, target_column:str, threshhold=3):
         # for column in df.select_dtypes(include=['number']).columns:
-        for column in self.df.select_dtypes(include=['number']).columns:
+     
+        for column in df.select_dtypes(include=['number']).columns:
             if column != target_column:  # Skip the target column itself
+                z_scores=zscore(df[column])
+                outliers=(abs(z_scores)> threshhold)
+
                 plt.figure(figsize=(8, 6))
-                plt.scatter(df[column], df[target_column], alpha=0.7)
+                sns.scatterplot(x=df[column], y=df[target_column], label='Normal Data', alpha=0.7)
+                  # Plot the outliers with a different color
+                sns.scatterplot(x=df[column][outliers], y=df[target_column][outliers], color="red", label="outliers", alpha=0.7)
                 plt.title(f'Scatter Plot of {column} vs {target_column}')
+                sns.regplot(x=df[column], y=df[target_column], scatter=False, color='blue', 
+                            line_kws={"lw": 1}, label='Regression Line')
                 plt.xlabel(column)
                 plt.ylabel(target_column)
+                plt.legend()
+              
                 plt.grid(True)
+                plt.tight_layout()
+                plt.savefig(f'../{folder}/{column}_scatter_plot.png')
                 plt.show()
+
+    
                  
 if __name__=='__main__':
     df=pd.read_csv('../Dataset/cleaned_failure_data.csv')
-    target_column=df['Machine failure']
+    target_column='Machine failure'
     dataframetransform=DataFrameTransform(df)
     nulls_before = dataframetransform.drop_null_columns()
     # Impute missing values
@@ -201,8 +224,12 @@ if __name__=='__main__':
     #plotter.hist_plot_for_skewed_columns()
     #plotter.box_plot_for_skewed_columns()
     #plotter.Q_plot_for_skewed_columns()
-    #transformations_info=dataframetransform.find_best_transformation(skewed_columns)
-    plotter.plot_scatter_plot(target_column)
+    transformations_info=dataframetransform.find_best_transformation(skewed_columns)
+    plotter.plot_scatter_plot('results/outlier/scatter_plot',df,target_column,3)
     #plotter.box_plot_for_outlier()
+    df2=dataframetransform.remove_outlier()
+    plotter.plot_scatter_plot('results/removed_outlier',df2,target_column,3)
+
+
    
         
