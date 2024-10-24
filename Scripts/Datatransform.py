@@ -33,7 +33,7 @@ if __name__ == "__main__":
     df=df.convert_dtypes()
     data_transform=DataTransform(df)
     data_transform.transform_data()
-    
+    df.to_csv('../Dataset/cleaned_failure_data.csv', index=False)
     print(df.head(5))
     print(df.info())
   

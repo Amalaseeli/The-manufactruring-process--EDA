@@ -1,10 +1,7 @@
 import pandas as pd
-from Datatransform import DataTransform
 
 def load_data():
-    df=pd.read_csv("../failure_data.csv")
-    data_transform = DataTransform(df)
-    data_transform.transform_data()
+    df=pd.read_csv("../Dataset/cleaned_failure_data.csv")
     return df
 
 class DataFrameInfo:
@@ -37,7 +34,7 @@ class DataFrameInfo:
         print("Null Values Information:")
         null_counts = self.df.isnull().sum()
         null_percentages = (self.df.isnull().mean() * 100).round(2)
-        null_info = pd.DataFrame({'Null Count': null_counts, 'Percentage': null_percentages})
+        null_info = pd.DataFrame({'Column':self.df.columns,'Null Count': null_counts, 'Percentage': null_percentages})
         print(null_info)
         return null_info
     
@@ -53,6 +50,7 @@ if __name__=="__main__":
     df=load_data()
     data_info=DataFrameInfo(df)
     data_info.data_frame_information()
+    
     
 
    

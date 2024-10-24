@@ -11,10 +11,13 @@ import numpy as np
 class DataFrameTransform:
     def __init__(self, df):
         self.df=df
+
     
     def drop_null_columns(self):
         #print(self.df.isna().sum())
         null_info=DataFrameInfo.null_values_info(self)
+        columns_to_drop=null_info[null_info['Percentage'] > 50]['Column']
+        self.df = self.df.drop(columns=columns_to_drop)
         return null_info
 
     def impute_columns(self, impute_strategy={'Air temperature [K]':'mean',
@@ -31,12 +34,14 @@ class DataFrameTransform:
                     raise ValueError("strategy must be mean or median")
                 self.df[col].fillna(impute_value, inplace=True)
                 print(self.df.head(5))
+                
+        return self.df
+
 
     def identify_skew_columns(self):
-        numeric_columns=['UDI','Air temperature [K]','Process temperature [K]','Rotational speed [rpm]','Torque [Nm]', 'Tool wear [min]']
         skewed_columns=[]
-        for col in numeric_columns:
-            print(f"{col}:", df[col].skew())
+        for col in self.df.select_dtypes(include=['number']).columns:  # Only select numeric columns:
+            print(f"{col}:", self.df[col].skew())
             if df[col].skew() < -0.5 or df[col].skew() > 0.5:
                 skewed_columns.append(col)
         return skewed_columns
@@ -134,34 +139,61 @@ class Plotter:
         self.df.hist(bins=50 )
         plt.subplots_adjust(hspace=0.8, wspace=0.7)
         plt.tight_layout()
-        plt.savefig('../results/hist_skew.png')
+        plt.savefig('../results/skew/histogram/hist_skew.png')
         plt.show()
     
     def box_plot_for_skewed_columns(self):
-        numeric_columns=['UDI','Air temperature [K]','Process temperature [K]','Rotational speed [rpm]','Torque [Nm]', 'Tool wear [min]']
-        for col in numeric_columns:
+        #numeric_columns=['UDI','Air temperature [K]','Process temperature [K]','Rotational speed [rpm]','Torque [Nm]', 'Tool wear [min]']
+        for col in self.df.select_dtypes(include=['number']).columns:
             sns.boxplot(self.df[col])
             plt.title(col+'skew')
             plt.tight_layout()
-            plt.savefig(f'../results/{col}_box_plot.png')
+            plt.savefig(f'../results/skew/box_plot/{col}_box_plot.png')
             plt.show()
     
     def Q_plot_for_skewed_columns(self):
-        numeric_columns=['UDI','Air temperature [K]','Process temperature [K]','Rotational speed [rpm]','Torque [Nm]', 'Tool wear [min]']
-        for col in numeric_columns:
-            qq_plot = qqplot(df[col] , scale=1 ,line='q', fit=True)
+        #numeric_columns=['UDI','Air temperature [K]','Process temperature [K]','Rotational speed [rpm]','Torque [Nm]', 'Tool wear [min]']
+        
+        for col in self.df.select_dtypes(include=['number']).columns:
+            print(self.df['Air temperature [K]'].isnull().sum())
+            qq_plot = qqplot(self.df[col] ,line='q', fit=True)
             plt.title(col)
-            plt.savefig(f'../results/{col}_Q_plot.png')
+            plt.savefig(f'../results/skew/Q_plot/{col}_Q_plot.png')
             pyplot.show()
+
+    def box_plot_for_outlier(self):
+        for col in self.df.select_dtypes(include=['number']).columns:
+            plt.figure(figsize=(10, 5))
+            sns.boxplot(self.df[col], color='lightgreen', showfliers=True)
+            sns.swarmplot(self.df[col], color='black', size=3)
+            plt.title(f'Box plot with scatter points of {col}')
+            plt.tight_layout()
+            plt.savefig(f'../results/outlier/box_plot/{col}_box_plot.png')
+            plt.show()
+
+    def plot_scatter_plot(self, target_column):
+        # for column in df.select_dtypes(include=['number']).columns:
+        for column in self.df.select_dtypes(include=['number']).columns:
+            if column != target_column:  # Skip the target column itself
+                plt.figure(figsize=(8, 6))
+                plt.scatter(df[column], df[target_column], alpha=0.7)
+                plt.title(f'Scatter Plot of {column} vs {target_column}')
+                plt.xlabel(column)
+                plt.ylabel(target_column)
+                plt.grid(True)
+                plt.show()
                  
 if __name__=='__main__':
-    df=pd.read_csv('../failure_data.csv')
+    df=pd.read_csv('../Dataset/cleaned_failure_data.csv')
+    target_column=df['Machine failure']
     dataframetransform=DataFrameTransform(df)
     nulls_before = dataframetransform.drop_null_columns()
     # Impute missing values
-    dataframetransform.impute_columns()
+    df=dataframetransform.impute_columns()
+    
     #Get null values after imputation
     nulls_after = dataframetransform.drop_null_columns()
+    
     plotter=Plotter(df)
     #plotter.plot_nulls( nulls_before ,nulls_after)
     skewed_columns= dataframetransform.identify_skew_columns()
@@ -169,6 +201,8 @@ if __name__=='__main__':
     #plotter.hist_plot_for_skewed_columns()
     #plotter.box_plot_for_skewed_columns()
     #plotter.Q_plot_for_skewed_columns()
-    transformations_info=dataframetransform.find_best_transformation(skewed_columns)
+    #transformations_info=dataframetransform.find_best_transformation(skewed_columns)
+    plotter.plot_scatter_plot(target_column)
+    #plotter.box_plot_for_outlier()
    
-         
+        
