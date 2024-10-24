@@ -204,6 +204,17 @@ class Plotter:
                 plt.savefig(f'../{folder}/{column}_scatter_plot.png')
                 plt.show()
 
+    def plot_corrlation_graph(self,df):
+        plt.figure(figsize=(8,6))
+        numeric_df = df.select_dtypes(include=['number'])
+        correlation_matrix = numeric_df.corr()
+        print(correlation_matrix)
+        sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm",linewidths=0.5)
+        plt.title('Correlation Heatmap')
+        plt.tight_layout()
+        plt.savefig(f'../results/collinerity/heatmap.png')
+        plt.show()
+
     
                  
 if __name__=='__main__':
@@ -225,10 +236,11 @@ if __name__=='__main__':
     #plotter.box_plot_for_skewed_columns()
     #plotter.Q_plot_for_skewed_columns()
     transformations_info=dataframetransform.find_best_transformation(skewed_columns)
-    plotter.plot_scatter_plot('results/outlier/scatter_plot',df,target_column,3)
+    #plotter.plot_scatter_plot('results/outlier/scatter_plot',df,target_column,3)
     #plotter.box_plot_for_outlier()
-    df2=dataframetransform.remove_outlier()
-    plotter.plot_scatter_plot('results/removed_outlier',df2,target_column,3)
+    #df2=dataframetransform.remove_outlier()
+    #plotter.plot_scatter_plot('results/removed_outlier',df2,target_column,3)
+    #plotter.plot_corrlation_graph(df)
 
 
    
