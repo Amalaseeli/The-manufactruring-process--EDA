@@ -42,13 +42,24 @@ Cloning Repository to your local machine
 1. Handling Missing Values: Columns with missing data are either filled using statistical imputation methods or dropped if the missing rate is too high.
 2. Detecting Skewness: Identify and correct skewed distributions using transformations like log, Box-Cox, or Yeo-Johnson.
 3. Normalization and Scaling: Normalize or scale the features to standardize their range for better model performance.
+4. Detecting and remove outliers.
+5. Identifying and removing highly correlated features.
 
 ## Visualization:
 - The project includes visualizations to understand the data distributions and transformations:
 
+- Comparing Results Before and After Handling Missing Values:
+  Histograms are used to compare the data distributions before and after removing or imputing null values.
+
 - Histograms for original and transformed distributions.
--  Q-Q plots for assessing normality.
--  Box plots to visualize outliers.
+1. Original Distribution
+2. Log Transformation
+3. Boxcox transformation
+4. Yeo-Johnson transformation.
+
+- Detecting Skewness Using Box Plots, Histograms, and Q-Q Plots
+-  Outlier Detection Using Box Plots and Scatter Plots.
+- Compute and visualize correlation heatmap.
     
 ## Results
 - Processed data and generated visualizations are saved in the results/ directory.
