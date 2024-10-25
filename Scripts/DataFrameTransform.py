@@ -129,6 +129,33 @@ class DataFrameTransform:
         condition=(z_scores.abs() <= threshhold).all(axis=1)
         self.df=self.df[condition]
         return self.df
+
+    def identify_correlated_column(self, Correlation_matrix, threshold):
+        correlated_pairs={}
+        for i in range(len(Correlation_matrix.columns)):
+            for j in range(i):
+                if abs(Correlation_matrix.iloc[i,j]) >threshold:
+                    col1=Correlation_matrix.columns[i]
+                    col2=Correlation_matrix.columns[j]
+                    correlated_pairs[(col1, col2)] = Correlation_matrix.iloc[i, j]
+        print(correlated_pairs)
+        return correlated_pairs
+        
+    def decide_columns_to_remove(self, corrlated_pairs):
+        columns_to_remove=set()
+        for i,j in corrlated_pairs.keys():
+            # print(i,j)
+            columns_to_remove.add(i)
+        print(f"Columns_to_remove:",list(columns_to_remove))
+        return list(columns_to_remove)
+
+    def remove_correlated_columns(self, df,columns_to_remove ):
+        cleaned_df=df.drop(columns=columns_to_remove, axis=1)
+        print(cleaned_df.head(5))
+        print(cleaned_df.shape)
+        cleaned_df.to_csv('../Dataset/cleaned_df.csv')
+        return cleaned_df
+
                 
 class Plotter:
     def __init__(self, df):
@@ -180,6 +207,8 @@ class Plotter:
             plt.savefig(f'../results/outlier/box_plot/{col}_box_plot.png')
             plt.show()
 
+    
+
     def plot_scatter_plot(self,folder,df:pd.DataFrame, target_column:str, threshhold=3):
         # for column in df.select_dtypes(include=['number']).columns:
      
@@ -203,8 +232,8 @@ class Plotter:
                 plt.tight_layout()
                 plt.savefig(f'../{folder}/{column}_scatter_plot.png')
                 plt.show()
-
-    def plot_corrlation_graph(self,df):
+    
+    def plot_corrlation_heatmap(self, df):
         plt.figure(figsize=(8,6))
         numeric_df = df.select_dtypes(include=['number'])
         correlation_matrix = numeric_df.corr()
@@ -214,9 +243,8 @@ class Plotter:
         plt.tight_layout()
         plt.savefig(f'../results/collinerity/heatmap.png')
         plt.show()
-
-    
-                 
+        return correlation_matrix
+                
 if __name__=='__main__':
     df=pd.read_csv('../Dataset/cleaned_failure_data.csv')
     target_column='Machine failure'
@@ -238,9 +266,12 @@ if __name__=='__main__':
     transformations_info=dataframetransform.find_best_transformation(skewed_columns)
     #plotter.plot_scatter_plot('results/outlier/scatter_plot',df,target_column,3)
     #plotter.box_plot_for_outlier()
-    #df2=dataframetransform.remove_outlier()
+    df2=dataframetransform.remove_outlier()
     #plotter.plot_scatter_plot('results/removed_outlier',df2,target_column,3)
-    #plotter.plot_corrlation_graph(df)
+    Corelation_matrix=plotter.plot_corrlation_heatmap(df2)
+    correlated_pairs=dataframetransform.identify_correlated_column(Corelation_matrix, threshold=0.75)
+    columns_to_remove=dataframetransform.decide_columns_to_remove(correlated_pairs)
+    dataframetransform.remove_correlated_columns( df2,columns_to_remove )
 
 
    
