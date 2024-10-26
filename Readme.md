@@ -52,14 +52,18 @@ Cloning Repository to your local machine
   Histograms are used to compare the data distributions before and after removing or imputing null values.
 
 - Histograms for original and transformed distributions.
-1. Original Distribution
-2. Log Transformation
-3. Boxcox transformation
-4. Yeo-Johnson transformation.
+  1. Original Distribution
+  2. Log Transformation
+  3. Boxcox transformation
+  4. Yeo-Johnson transformation.
 
 - Detecting Skewness Using Box Plots, Histograms, and Q-Q Plots
 -  Outlier Detection Using Box Plots and Scatter Plots.
 - Compute and visualize correlation heatmap.
+
+- Identifying Correlation Between Machine Settings and Failures
+- Visualizing Risk Factors
+  - Scatter plots and box plots were used to visualize the relationships between machine settings and failure occurrences.
     
 ## Results
 - Processed data and generated visualizations are saved in the results/ directory.
